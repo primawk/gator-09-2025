@@ -12,7 +12,7 @@ export function setUser(name: string) {
 }
 
 export function readConfig(): Config {
-  const config = JSON.parse(
+  const config: Config = JSON.parse(
     readFileSync(getConfigFilePath() + "/.gatorconfig.json", {
       encoding: "utf-8",
     })
