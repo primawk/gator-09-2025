@@ -8,7 +8,6 @@ function snakeToCamel(str: string): string {
   return str.replace(/_([a-z])/g, (_, c) => c.toUpperCase());
 }
 
-// 3. Recursively convert object keys to camelCase
 export function convertKeysToCamel<T>(obj: any): T {
   if (Array.isArray(obj)) {
     return obj.map((v) => convertKeysToCamel(v)) as T;
