@@ -1,6 +1,6 @@
 import { CommandHandler, CommandsRegistry } from "./types";
 
-export function registerCommand(
+export async function registerCommand(
   registry: CommandsRegistry,
   cmdName: string,
   handler: CommandHandler
@@ -8,7 +8,7 @@ export function registerCommand(
   registry[cmdName] = handler;
 }
 
-export function runCommand(
+export async function runCommand(
   registry: CommandsRegistry,
   cmdName: string,
   ...args: string[]

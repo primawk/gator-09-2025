@@ -4,7 +4,7 @@ import { registerCommand, runCommand } from "./registerCommand";
 import { CommandsRegistry } from "./types";
 import { argv } from "node:process";
 
-function main() {
+async function main() {
   let initObj: CommandsRegistry = {};
   registerCommand(initObj, "login", handlerLogin);
 
@@ -20,6 +20,7 @@ function main() {
     }
   });
   // readConfig();
+  process.exit(0);
 }
 
 main();

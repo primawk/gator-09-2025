@@ -1,6 +1,6 @@
 import { setUser } from "./config";
 
-export function handlerLogin(cmdName: string, ...args: string[]) {
+export async function handlerLogin(cmdName: string, ...args: string[]) {
   if (args.length === 0) {
     console.error("username is required.");
     process.exit(1);
