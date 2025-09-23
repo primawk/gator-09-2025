@@ -13,5 +13,5 @@ export async function runCommand(
   cmdName: string,
   ...args: string[]
 ) {
-  console.log(registry[cmdName](cmdName, ...args));
+  registry[cmdName](cmdName, ...args);
 }
