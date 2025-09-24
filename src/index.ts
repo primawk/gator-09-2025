@@ -10,18 +10,19 @@ async function main() {
   registerCommand(initObj, "register", registerHandler);
 
   const cmds = argv.slice(2);
+  const args = argv.slice(3);
   if (cmds.length === 0) {
     console.error("There is no command input.");
     process.exit(1);
   }
-  // bug
-  console.log(cmds);
-  cmds.forEach((cmd) => {
-    if (cmd in initObj) {
-      const args = argv.slice(3);
-      runCommand(initObj, cmd, ...args);
-    }
-  });
+
+  if (cmds[0] in initObj) {
+    await runCommand(initObj, cmds[0], ...args);
+  } else {
+    console.error("The command is not registered.");
+    process.exit(1);
+  }
+
   // readConfig();
   process.exit(0);
 }

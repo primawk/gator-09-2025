@@ -17,7 +17,6 @@ export function readConfig(): Config {
       encoding: "utf-8",
     })
   );
-  console.log("readConfig");
   console.log(config);
   return config;
 }

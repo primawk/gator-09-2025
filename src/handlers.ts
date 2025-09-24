@@ -1,4 +1,4 @@
-import { setUser } from "./config";
+import { readConfig, setUser } from "./config";
 import { createUser, getUser } from "./lib/db/queries/users";
 
 export async function handlerLogin(cmdName: string, ...args: string[]) {
@@ -15,6 +15,18 @@ export async function registerHandler(cmdName: string, ...args: string[]) {
     console.error("name is required.");
     process.exit(1);
   }
-  const existingUser = getUser(args[0]);
-  console.log({ existingUser });
+  try {
+    const response = await getUser(args[0]);
+    console.log({ response });
+  } catch (error) {
+    console.error(error);
+  }
+  // const existingUser = await getUser(args[0]);
+  // console.log({ existingUser });
+
+  // createUser(args[0]);
+  // console.log("new user is created");
+  // setUser(args[0]);
+
+  // readConfig();
 }
