@@ -22,9 +22,6 @@ async function main() {
     console.error("The command is not registered.");
     process.exit(1);
   }
-
-  // readConfig();
-  process.exit(0);
 }
 
 main();

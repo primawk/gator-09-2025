@@ -13,20 +13,13 @@ export async function handlerLogin(cmdName: string, ...args: string[]) {
 export async function registerHandler(cmdName: string, ...args: string[]) {
   if (args.length === 0) {
     console.error("name is required.");
-    process.exit(1);
+    process.exit(1); // only exits if no args
   }
+
   try {
-    const response = await getUser(args[0]);
-    console.log({ response });
-  } catch (error) {
-    console.error(error);
+    const response = await createUser(args[0]);
+    return response; // 👈 await here
+  } catch (err) {
+    console.error("🔴 Error from createUser:", err);
   }
-  // const existingUser = await getUser(args[0]);
-  // console.log({ existingUser });
-
-  // createUser(args[0]);
-  // console.log("new user is created");
-  // setUser(args[0]);
-
-  // readConfig();
 }
