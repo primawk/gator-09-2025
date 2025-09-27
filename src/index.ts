@@ -1,4 +1,3 @@
-import { readConfig, setUser } from "./config";
 import { handlerLogin, registerHandler } from "./handlers";
 import { registerCommand, runCommand } from "./registerCommand";
 import { CommandsRegistry } from "./types";
@@ -17,7 +16,7 @@ async function main() {
   }
 
   if (cmds[0] in initObj) {
-    await runCommand(initObj, cmds[0], ...args);
+    runCommand(initObj, cmds[0], ...args);
   } else {
     console.error("The command is not registered.");
     process.exit(1);

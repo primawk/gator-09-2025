@@ -1,5 +1,5 @@
-import { readConfig, setUser } from "./config";
-import { createUser, getUser } from "./lib/db/queries/users";
+import { setUser } from "./config";
+import { createUser } from "./lib/db/queries/users";
 
 export async function handlerLogin(cmdName: string, ...args: string[]) {
   if (args.length === 0) {
@@ -17,8 +17,7 @@ export async function registerHandler(cmdName: string, ...args: string[]) {
   }
 
   try {
-    const response = await createUser(args[0]);
-    return response; // 👈 await here
+    createUser(args[0]);
   } catch (err) {
     console.error("🔴 Error from createUser:", err);
   }
