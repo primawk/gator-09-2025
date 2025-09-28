@@ -1,24 +1,56 @@
-import { setUser } from "./config";
-import { createUser } from "./lib/db/queries/users";
+import { readConfig, setUser } from "./config";
+import { createUser, getUser } from "./lib/db/queries/users";
 
 export async function handlerLogin(cmdName: string, ...args: string[]) {
   if (args.length === 0) {
     console.error("username is required.");
     process.exit(1);
   }
+
+  try {
+    const response = await getUser(args[0]);
+    if (!response?.name) {
+      throw Error("user does not exist!");
+    }
+  } catch (error) {
+    console.error("🔴 Error from getUser:", error);
+    process.exit(1);
+  }
+
   setUser(args[0]);
   console.log(`${args[0]} has been set as the user.`);
+  process.exit(0);
 }
 
 export async function registerHandler(cmdName: string, ...args: string[]) {
   if (args.length === 0) {
-    console.error("name is required.");
-    process.exit(1); // only exits if no args
+    throw Error("name is required.");
   }
 
   try {
-    createUser(args[0]);
+    const response = await getUser(args[0]);
+    if (response?.name === args[0]) {
+      throw Error("name is already exist");
+    }
+  } catch (error) {
+    console.error("🔴 Error from getUser:", error);
+    process.exit(1);
+  }
+
+  try {
+    const result = await createUser(args[0]);
+    console.log(`User has been registered: ${result.name}`);
   } catch (err) {
     console.error("🔴 Error from createUser:", err);
+    process.exit(1);
+  }
+
+  try {
+    setUser(args[0]);
+    console.log("user has been created!", readConfig());
+    process.exit(0);
+  } catch (error) {
+    console.error("🔴 Error from setUser:", error);
+    process.exit(1);
   }
 }

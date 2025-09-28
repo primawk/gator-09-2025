@@ -10,17 +10,16 @@ async function main() {
 
   const cmds = argv.slice(2);
   const args = argv.slice(3);
+
   if (cmds.length === 0) {
     console.error("There is no command input.");
-    process.exit(1);
-  }
-
-  if (cmds[0] in initObj) {
-    runCommand(initObj, cmds[0], ...args);
+  } else if (cmds[0] in initObj) {
+    const response = await runCommand(initObj, cmds[0], ...args);
+    return response;
   } else {
     console.error("The command is not registered.");
-    process.exit(1);
   }
+  process.exit(0);
 }
 
 main();
