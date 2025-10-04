@@ -1,5 +1,5 @@
 import { readConfig, setUser } from "./config";
-import { createUser, getUser } from "./lib/db/queries/users";
+import { createUser, deleteAllUsers, getUser } from "./lib/db/queries/users";
 
 export async function handlerLogin(cmdName: string, ...args: string[]) {
   if (args.length === 0) {
@@ -51,6 +51,17 @@ export async function registerHandler(cmdName: string, ...args: string[]) {
     process.exit(0);
   } catch (error) {
     console.error("🔴 Error from setUser:", error);
+    process.exit(1);
+  }
+}
+
+export async function resetHandler() {
+  try {
+    await deleteAllUsers();
+    console.log("all users data has been deleted!");
+    process.exit(0);
+  } catch (error) {
+    console.error("🔴 Error from reset:", error);
     process.exit(1);
   }
 }
