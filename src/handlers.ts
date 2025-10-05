@@ -1,5 +1,11 @@
+import { exit } from "node:process";
 import { readConfig, setUser } from "./config";
-import { createUser, deleteAllUsers, getUser } from "./lib/db/queries/users";
+import {
+  createUser,
+  deleteAllUsers,
+  getUser,
+  getUsers,
+} from "./lib/db/queries/users";
 
 export async function handlerLogin(cmdName: string, ...args: string[]) {
   if (args.length === 0) {
@@ -62,6 +68,25 @@ export async function resetHandler() {
     process.exit(0);
   } catch (error) {
     console.error("🔴 Error from reset:", error);
+    process.exit(1);
+  }
+}
+
+export async function getAllUsersHandler() {
+  const currentUser = readConfig().currentUserName;
+  try {
+    const response = await getUsers();
+
+    response.forEach((user: { name: string }) => {
+      if (user.name === currentUser) {
+        console.log(`* ${user.name} (current)`);
+      } else {
+        console.log(`* ${user.name}`);
+      }
+    });
+    process.exit(0);
+  } catch (error) {
+    console.error("🔴 Error from getAllUsers:", error);
     process.exit(1);
   }
 }
