@@ -90,3 +90,17 @@ export async function getAllUsersHandler() {
     process.exit(1);
   }
 }
+
+export async function fetchFeed(feedURL: string) {
+  try {
+    const response = await fetch(feedURL, {
+      headers: {
+        "User-Agent": "gator",
+      },
+    });
+    const result = await response.text();
+  } catch (error) {
+    console.error("🔴 Error from fetchFeed:", error);
+    process.exit(1);
+  }
+}
