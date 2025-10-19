@@ -1,4 +1,4 @@
-import { exit } from "node:process";
+import { XMLParser } from "fast-xml-parser";
 import { readConfig, setUser } from "./config";
 import {
   createUser,
@@ -6,6 +6,7 @@ import {
   getUser,
   getUsers,
 } from "./lib/db/queries/users";
+import { parse } from "path";
 
 export async function handlerLogin(cmdName: string, ...args: string[]) {
   if (args.length === 0) {
@@ -99,6 +100,9 @@ export async function fetchFeed(feedURL: string) {
       },
     });
     const result = await response.text();
+
+    const parser = new XMLParser();
+    let jObj = parser.parse(result);
   } catch (error) {
     console.error("🔴 Error from fetchFeed:", error);
     process.exit(1);
