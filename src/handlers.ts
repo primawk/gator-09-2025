@@ -7,6 +7,8 @@ import {
   getUsers,
 } from "./lib/db/queries/users";
 import { parse } from "path";
+import { RSSFeed, RSSItem } from "./types";
+import { channel } from "diagnostics_channel";
 
 export async function handlerLogin(cmdName: string, ...args: string[]) {
   if (args.length === 0) {
@@ -92,7 +94,9 @@ export async function getAllUsersHandler() {
   }
 }
 
-export async function fetchFeed(feedURL: string) {
+export async function fetchFeedHandler() {
+  const feedURL = "https://www.wagslane.dev/index.xml";
+
   try {
     const response = await fetch(feedURL, {
       headers: {
@@ -103,6 +107,39 @@ export async function fetchFeed(feedURL: string) {
 
     const parser = new XMLParser();
     let jObj = parser.parse(result);
+    const rssFeed: RSSFeed = jObj.rss;
+
+    if (!rssFeed.channel) throw Error("channel does not exist!");
+    if (
+      !rssFeed.channel.title ||
+      !rssFeed.channel.description ||
+      !rssFeed.channel.link
+    )
+      throw Error("there are metadatas missing!");
+    const metadata = {
+      title: rssFeed.channel.title,
+      link: rssFeed.channel.link,
+      description: rssFeed.channel.description,
+    };
+    if (!Array.isArray(rssFeed.channel.item)) rssFeed.channel.item = [];
+
+    const cleanedItems: RSSItem[] = rssFeed.channel.item.map(
+      ({ title, link, description, pubDate }) => ({
+        title,
+        link,
+        description,
+        pubDate,
+      })
+    );
+
+    console.log({
+      metadata: metadata,
+      items: cleanedItems,
+    });
+    // return {
+    //   metadata: metadata,
+    //   items: cleanedItems,
+    // };
   } catch (error) {
     console.error("🔴 Error from fetchFeed:", error);
     process.exit(1);

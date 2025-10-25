@@ -1,4 +1,5 @@
 import {
+  fetchFeedHandler,
   getAllUsersHandler,
   handlerLogin,
   registerHandler,
@@ -14,6 +15,7 @@ async function main() {
   registerCommand(initObj, "register", registerHandler);
   registerCommand(initObj, "reset", resetHandler);
   registerCommand(initObj, "users", getAllUsersHandler);
+  registerCommand(initObj, "agg", fetchFeedHandler);
 
   const cmds = argv.slice(2);
   const args = argv.slice(3);
