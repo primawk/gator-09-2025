@@ -136,12 +136,10 @@ export async function fetchFeedHandler() {
       metadata: metadata,
       items: cleanedItems,
     });
-    // return {
-    //   metadata: metadata,
-    //   items: cleanedItems,
-    // };
   } catch (error) {
     console.error("🔴 Error from fetchFeed:", error);
     process.exit(1);
   }
 }
+
+export async function addFeedHandler(name: string, url: string) {}
