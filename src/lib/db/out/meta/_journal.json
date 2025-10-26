@@ -12,22 +12,8 @@
     {
       "idx": 1,
       "version": "7",
-      "when": 1761449364549,
-      "tag": "0001_true_senator_kelly",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1761449668860,
-      "tag": "0002_parched_avengers",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1761450232831,
-      "tag": "0003_safe_maximus",
+      "when": 1761474161596,
+      "tag": "0001_old_titania",
       "breakpoints": true
     }
   ]
