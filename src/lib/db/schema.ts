@@ -23,3 +23,6 @@ export const feeds = pgTable("feeds", {
     .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
 });
+
+export type Feed = typeof feeds.$inferSelect; // feeds is the table object in schema.ts
+export type User = typeof users.$inferSelect; // feeds is the table object in schema.ts

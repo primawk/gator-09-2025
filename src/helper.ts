@@ -1,4 +1,5 @@
 import os from "os";
+import { Feed, User } from "./lib/db/schema";
 
 export function getConfigFilePath(): string {
   return os.homedir();
@@ -19,4 +20,9 @@ export function convertKeysToCamel<T>(obj: any): T {
     }, {} as any);
   }
   return obj;
+}
+
+export function printFeed(feed: Feed, user: User) {
+  console.log(feed);
+  console.log(user);
 }

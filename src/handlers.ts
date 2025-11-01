@@ -94,9 +94,7 @@ export async function getAllUsersHandler() {
   }
 }
 
-export async function fetchFeedHandler() {
-  const feedURL = "https://www.wagslane.dev/index.xml";
-
+export async function fetchFeedHandler(feedURL: string) {
   try {
     const response = await fetch(feedURL, {
       headers: {
@@ -132,14 +130,23 @@ export async function fetchFeedHandler() {
       })
     );
 
-    console.log({
+    return {
       metadata: metadata,
       items: cleanedItems,
-    });
+    };
   } catch (error) {
     console.error("🔴 Error from fetchFeed:", error);
     process.exit(1);
   }
 }
 
-export async function addFeedHandler(name: string, url: string) {}
+export async function addFeed(name: string, url: string) {
+  const currentUser = readConfig().currentUserName;
+  try {
+    const response = await fetchFeedHandler(url);
+    console.log({ response });
+  } catch (error) {
+    console.error("🔴 Error from fetchFeed:", error);
+    process.exit(1);
+  }
+}
