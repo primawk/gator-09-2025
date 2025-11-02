@@ -10,7 +10,7 @@ import { parse } from "path";
 import { MetaDatas, RSSFeed, RSSItem } from "./types";
 import { channel } from "diagnostics_channel";
 import { printFeed } from "./helper";
-import { createFeed } from "./lib/db/queries/feed";
+import { createFeed } from "./lib/db/queries/feeds";
 
 export async function handlerLogin(cmdName: string, ...args: string[]) {
   if (args.length === 0) {
@@ -158,7 +158,7 @@ export async function addFeed(cmdName: string, ...args: string[]) {
       }
       printFeed(storeFeed, responseGetUser);
     }
-    console.log("Feed has has been stored.")
+    console.log("Feed has has been stored.");
     process.exit(0);
   } catch (error) {
     console.error(`🔴 Error from ${cmdName}:`, error);
