@@ -8,7 +8,15 @@ export type CommandHandler = (
   ...args: string[]
 ) => Promise<void>;
 
-export type CommandsRegistry = Record<string, CommandHandler>;
+export type CommandHandlerFetchFeed = (
+  cmdName: string,
+  ...args: string[]
+) => Promise<MetaDatas>;
+
+export type CommandsRegistry = Record<
+  string,
+  CommandHandler | CommandHandlerFetchFeed
+>;
 
 export type RSSFeed = {
   channel: {
@@ -24,4 +32,13 @@ export type RSSItem = {
   link: string;
   description: string;
   pubDate: string;
+};
+
+export type MetaDatas = {
+  metadata: {
+    title: string;
+    link: string;
+    description: string;
+  };
+  items: RSSItem[];
 };

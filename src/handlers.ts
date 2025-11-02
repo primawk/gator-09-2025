@@ -7,8 +7,10 @@ import {
   getUsers,
 } from "./lib/db/queries/users";
 import { parse } from "path";
-import { RSSFeed, RSSItem } from "./types";
+import { MetaDatas, RSSFeed, RSSItem } from "./types";
 import { channel } from "diagnostics_channel";
+import { printFeed } from "./helper";
+import { createFeed } from "./lib/db/queries/feed";
 
 export async function handlerLogin(cmdName: string, ...args: string[]) {
   if (args.length === 0) {
@@ -22,7 +24,7 @@ export async function handlerLogin(cmdName: string, ...args: string[]) {
       throw Error("user does not exist!");
     }
   } catch (error) {
-    console.error("🔴 Error from getUser:", error);
+    console.error(`🔴 Error from ${cmdName}:`, error);
     process.exit(1);
   }
 
@@ -42,7 +44,7 @@ export async function registerHandler(cmdName: string, ...args: string[]) {
       throw Error("name is already exist");
     }
   } catch (error) {
-    console.error("🔴 Error from getUser:", error);
+    console.error(`🔴 Error from ${cmdName}:`, error);
     process.exit(1);
   }
 
@@ -50,7 +52,7 @@ export async function registerHandler(cmdName: string, ...args: string[]) {
     const result = await createUser(args[0]);
     console.log(`User has been registered: ${result.name}`);
   } catch (err) {
-    console.error("🔴 Error from createUser:", err);
+    console.error(`🔴 Error from ${cmdName}:`, err);
     process.exit(1);
   }
 
@@ -94,7 +96,7 @@ export async function getAllUsersHandler() {
   }
 }
 
-export async function fetchFeedHandler(feedURL: string) {
+export async function fetchFeedHandler(feedURL: string): Promise<MetaDatas> {
   try {
     const response = await fetch(feedURL, {
       headers: {
@@ -140,13 +142,26 @@ export async function fetchFeedHandler(feedURL: string) {
   }
 }
 
-export async function addFeed(name: string, url: string) {
-  const currentUser = readConfig().currentUserName;
+export async function addFeed(cmdName: string, ...args: string[]) {
+  const name = args[0];
+  const url = args[1];
+  if (!name || !url) throw Error("arguments is missing!");
+
   try {
-    const response = await fetchFeedHandler(url);
-    console.log({ response });
+    const responseFetchFeed = await fetchFeedHandler(url);
+    if (responseFetchFeed) {
+      const responseGetUser = await getUser(readConfig().currentUserName);
+      const storeFeed = await createFeed(name, url, responseGetUser.id);
+
+      if (!responseGetUser?.name) {
+        throw Error("user does not exist!");
+      }
+      printFeed(storeFeed, responseGetUser);
+    }
+    console.log("Feed has has been stored.")
+    process.exit(0);
   } catch (error) {
-    console.error("🔴 Error from fetchFeed:", error);
+    console.error(`🔴 Error from ${cmdName}:`, error);
     process.exit(1);
   }
 }

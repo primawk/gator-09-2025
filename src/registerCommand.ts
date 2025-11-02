@@ -1,9 +1,13 @@
-import { CommandHandler, CommandsRegistry } from "./types";
+import {
+  CommandHandler,
+  CommandHandlerFetchFeed,
+  CommandsRegistry,
+} from "./types";
 
 export async function registerCommand(
   registry: CommandsRegistry,
   cmdName: string,
-  handler: CommandHandler
+  handler: CommandHandler | CommandHandlerFetchFeed
 ) {
   registry[cmdName] = handler;
 }
