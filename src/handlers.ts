@@ -4,13 +4,12 @@ import {
   createUser,
   deleteAllUsers,
   getUser,
+  getUserById,
   getUsers,
 } from "./lib/db/queries/users";
-import { parse } from "path";
 import { MetaDatas, RSSFeed, RSSItem } from "./types";
-import { channel } from "diagnostics_channel";
 import { printFeed } from "./helper";
-import { createFeed } from "./lib/db/queries/feeds";
+import { createFeed, readFeeds } from "./lib/db/queries/feeds";
 
 export async function handlerLogin(cmdName: string, ...args: string[]) {
   if (args.length === 0) {
@@ -159,6 +158,37 @@ export async function addFeed(cmdName: string, ...args: string[]) {
       printFeed(storeFeed, responseGetUser);
     }
     console.log("Feed has has been stored.");
+    process.exit(0);
+  } catch (error) {
+    console.error(`🔴 Error from ${cmdName}:`, error);
+    process.exit(1);
+  }
+}
+
+export async function feeds(cmdName: string) {
+  try {
+    const response = await readFeeds();
+
+    let result: {
+      name: string;
+      url: string;
+      userId: string;
+      username: string;
+    }[] = [];
+
+    for (let i = 0; i < response?.length; i++) {
+      try {
+        const responseUserDetails = await getUserById(response[i].userId);
+        const username = responseUserDetails.name;
+        result.push({ ...response[i], username });
+      } catch (error) {
+        console.error(
+          `🔴 Error from fetching ${response[i].userId} user id:`,
+          error
+        );
+      }
+    }
+    console.log(result);
     process.exit(0);
   } catch (error) {
     console.error(`🔴 Error from ${cmdName}:`, error);
