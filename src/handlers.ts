@@ -195,3 +195,5 @@ export async function feeds(cmdName: string) {
     process.exit(1);
   }
 }
+
+export async function createFeedFollow() {}
