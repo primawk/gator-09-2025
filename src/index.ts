@@ -2,6 +2,7 @@ import {
   addFeed,
   feeds,
   fetchFeedHandler,
+  follow,
   getAllUsersHandler,
   handlerLogin,
   registerHandler,
@@ -20,6 +21,7 @@ async function main() {
   registerCommand(initObj, "agg", fetchFeedHandler);
   registerCommand(initObj, "addfeed", addFeed);
   registerCommand(initObj, "feeds", feeds);
+  registerCommand(initObj, "follow", follow);
 
   const cmds = argv.slice(2);
   const args = argv.slice(3);

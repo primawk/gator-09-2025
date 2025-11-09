@@ -27,6 +27,5 @@ export async function createFeedFollow(userId: string, feedId: string) {
     .innerJoin(users, eq(feedFollows.userId, users.id))
     .where(eq(feedFollows.id, newFeedFollow.id));
 
-  console.log({ resultFeed });
-  console.log({ resultUser });
+  return { newFeedFollow, resultFeed, resultUser };
 }

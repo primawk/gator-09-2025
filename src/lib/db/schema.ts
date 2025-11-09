@@ -1,10 +1,4 @@
-import {
-  pgTable,
-  timestamp,
-  uuid,
-  text,
-  uniqueIndex,
-} from "drizzle-orm/pg-core";
+import { pgTable, timestamp, uuid, text, unique } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom().notNull(),
@@ -46,14 +40,7 @@ export const feedFollows = pgTable(
       .references(() => feeds.id, { onDelete: "cascade" })
       .notNull(),
   },
-  (table) => [
-    {
-      userFeedUnique: uniqueIndex("user_feed_unique").on(
-        table.userId,
-        table.feedId
-      ),
-    },
-  ]
+  (table) => [unique().on(table.feedId, table.userId)]
 );
 
 export type Feed = typeof feeds.$inferSelect; // feeds is the table object in schema.ts

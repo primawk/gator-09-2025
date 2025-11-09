@@ -9,7 +9,9 @@ import {
 } from "./lib/db/queries/users";
 import { MetaDatas, RSSFeed, RSSItem } from "./types";
 import { printFeed } from "./helper";
-import { createFeed, readFeeds } from "./lib/db/queries/feeds";
+import { createFeed, getFeedByUrl, readFeeds } from "./lib/db/queries/feeds";
+import { feedFollows } from "./lib/db/schema";
+import { createFeedFollow } from "./lib/db/queries/feedFollows";
 
 export async function handlerLogin(cmdName: string, ...args: string[]) {
   if (args.length === 0) {
@@ -196,4 +198,23 @@ export async function feeds(cmdName: string) {
   }
 }
 
-export async function createFeedFollow() {}
+export async function follow(cmdName: string, url: string) {
+  try {
+    const responseGetUser = await getUser(readConfig().currentUserName);
+    const responseFeedByUrl = await getFeedByUrl(url);
+    console.log({ responseFeedByUrl });
+    if (responseGetUser && responseFeedByUrl) {
+      const followResponse = await createFeedFollow(
+        responseGetUser.id,
+        responseFeedByUrl.id
+      );
+
+      console.log({ followResponse });
+    }
+
+    process.exit(0);
+  } catch (error) {
+    console.error(`🔴 Error from ${cmdName}:`, error);
+    process.exit(1);
+  }
+}

@@ -15,6 +15,13 @@
       "when": 1761474161596,
       "tag": "0001_old_titania",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1762681907164,
+      "tag": "0002_stale_metal_master",
+      "breakpoints": true
     }
   ]
 }
