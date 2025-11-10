@@ -10,7 +10,6 @@ import {
 import { MetaDatas, RSSFeed, RSSItem } from "./types";
 import { printFeed } from "./helper";
 import { createFeed, getFeedByUrl, readFeeds } from "./lib/db/queries/feeds";
-import { feedFollows } from "./lib/db/schema";
 import { createFeedFollow } from "./lib/db/queries/feedFollows";
 
 export async function handlerLogin(cmdName: string, ...args: string[]) {
@@ -211,6 +210,18 @@ export async function follow(cmdName: string, url: string) {
 
       console.log({ followResponse });
     }
+
+    process.exit(0);
+  } catch (error) {
+    console.error(`🔴 Error from ${cmdName}:`, error);
+    process.exit(1);
+  }
+}
+
+export async function getFeedFollowsForUser(cmdName: string) {
+  try {
+    const responseCurrentUser = await getUser(readConfig().currentUserName);
+    console.log({ responseCurrentUser });
 
     process.exit(0);
   } catch (error) {
