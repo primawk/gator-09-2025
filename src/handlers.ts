@@ -10,7 +10,10 @@ import {
 import { MetaDatas, RSSFeed, RSSItem } from "./types";
 import { printFeed } from "./helper";
 import { createFeed, getFeedByUrl, readFeeds } from "./lib/db/queries/feeds";
-import { createFeedFollow } from "./lib/db/queries/feedFollows";
+import {
+  createFeedFollow,
+  getFeedFollowsByUser,
+} from "./lib/db/queries/feedFollows";
 
 export async function handlerLogin(cmdName: string, ...args: string[]) {
   if (args.length === 0) {
@@ -159,7 +162,9 @@ export async function addFeed(cmdName: string, ...args: string[]) {
       printFeed(storeFeed, responseGetUser);
     }
     console.log("Feed has has been stored.");
-    process.exit(0);
+
+    const responseFollow = await follow("follow", url);
+    console.log({ responseFollow });
   } catch (error) {
     console.error(`🔴 Error from ${cmdName}:`, error);
     process.exit(1);
@@ -210,7 +215,6 @@ export async function follow(cmdName: string, url: string) {
 
       console.log({ followResponse });
     }
-
     process.exit(0);
   } catch (error) {
     console.error(`🔴 Error from ${cmdName}:`, error);
@@ -221,7 +225,14 @@ export async function follow(cmdName: string, url: string) {
 export async function getFeedFollowsForUser(cmdName: string) {
   try {
     const responseCurrentUser = await getUser(readConfig().currentUserName);
-    console.log({ responseCurrentUser });
+
+    const responseFeedFollowsByUser = await getFeedFollowsByUser(
+      responseCurrentUser.id
+    );
+    console.log(`${responseCurrentUser.name} is following:
+       ${responseFeedFollowsByUser?.map((item) => item.name)} 
+        `);
+    // console.log({ responseFeedFollowsByUser });
 
     process.exit(0);
   } catch (error) {
