@@ -9,19 +9,17 @@ export async function createFeedFollow(userId: string, feedId: string) {
     .returning();
 
   // 2. Fetch the inserted row with joined data
-  const resultFeed = await db
+  const [resultFeed] = await db
     .select({
-      feedFollow: feedFollows,
-      feed: feeds,
+      feed: feeds.name,
     })
     .from(feedFollows)
     .innerJoin(feeds, eq(feedFollows.feedId, feeds.id))
     .where(eq(feedFollows.id, newFeedFollow.id));
 
-  const resultUser = await db
+  const [resultUser] = await db
     .select({
-      feedFollow: feedFollows,
-      user: users,
+      username: users.name,
     })
     .from(feedFollows)
     .innerJoin(users, eq(feedFollows.userId, users.id))
@@ -31,6 +29,9 @@ export async function createFeedFollow(userId: string, feedId: string) {
 }
 
 export async function getFeedFollowsByUser(userId: string) {
-  const result = await db.select().from(feeds).where(eq(feeds.userId, userId));
+  const result = await db
+    .select({ feedId: feedFollows.feedId })
+    .from(feedFollows)
+    .where(eq(feedFollows.userId, userId));
   return result;
 }
