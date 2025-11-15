@@ -229,9 +229,10 @@ export async function getFeedFollowsForUser(cmdName: string) {
     const responseFeedFollowsByUser = await getFeedFollowsByUser(
       responseCurrentUser.id
     );
-    console.log(`${responseCurrentUser.name} is following:
-       ${responseFeedFollowsByUser?.map((item) => item.feed)}
-        `);
+
+    console.log(
+      responseFeedFollowsByUser?.map((item) => `- ${item.feed}`).join("\n")
+    );
 
     process.exit(0);
   } catch (error) {
