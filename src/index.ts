@@ -9,6 +9,7 @@ import {
   registerHandler,
   resetHandler,
 } from "./handlers";
+import { middlewareLoggedIn } from "./middleware";
 import { registerCommand, runCommand } from "./registerCommand";
 import { CommandsRegistry } from "./types";
 import { argv } from "node:process";
@@ -20,10 +21,14 @@ async function main() {
   registerCommand(initObj, "reset", resetHandler);
   registerCommand(initObj, "users", getAllUsersHandler);
   registerCommand(initObj, "agg", fetchFeedHandler);
-  registerCommand(initObj, "addfeed", addFeed);
+  registerCommand(initObj, "addfeed", middlewareLoggedIn(addFeed));
   registerCommand(initObj, "feeds", feeds);
-  registerCommand(initObj, "follow", follow);
-  registerCommand(initObj, "following", getFeedFollowsForUser);
+  registerCommand(initObj, "follow", middlewareLoggedIn(follow));
+  registerCommand(
+    initObj,
+    "following",
+    middlewareLoggedIn(getFeedFollowsForUser)
+  );
 
   const cmds = argv.slice(2);
   const args = argv.slice(3);

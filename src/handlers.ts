@@ -14,6 +14,7 @@ import {
   createFeedFollow,
   getFeedFollowsByUser,
 } from "./lib/db/queries/feedFollows";
+import { User } from "./lib/db/schema";
 
 export async function handlerLogin(cmdName: string, ...args: string[]) {
   if (args.length === 0) {
@@ -145,7 +146,7 @@ export async function fetchFeedHandler(feedURL: string): Promise<MetaDatas> {
   }
 }
 
-export async function addFeed(cmdName: string, ...args: string[]) {
+export async function addFeed(cmdName: string, user: User, ...args: string[]) {
   const name = args[0];
   const url = args[1];
   if (!name || !url) throw Error("arguments is missing!");
@@ -153,17 +154,16 @@ export async function addFeed(cmdName: string, ...args: string[]) {
   try {
     const responseFetchFeed = await fetchFeedHandler(url);
     if (responseFetchFeed) {
-      const responseGetUser = await getUser(readConfig().currentUserName);
-      const storeFeed = await createFeed(name, url, responseGetUser.id);
+      const storeFeed = await createFeed(name, url, user.id);
 
-      if (!responseGetUser?.name) {
+      if (!user?.name) {
         throw Error("user does not exist!");
       }
-      printFeed(storeFeed, responseGetUser);
+      printFeed(storeFeed, user);
     }
     console.log("Feed has has been stored.");
 
-    const responseFollow = await follow("follow", url);
+    const responseFollow = await follow("follow", user, url);
     console.log({ responseFollow });
   } catch (error) {
     console.error(`🔴 Error from ${cmdName}:`, error);
@@ -202,14 +202,14 @@ export async function feeds(cmdName: string) {
   }
 }
 
-export async function follow(cmdName: string, url: string) {
+export async function follow(cmdName: string, user: User, url: string) {
   try {
-    const responseGetUser = await getUser(readConfig().currentUserName);
     const responseFeedByUrl = await getFeedByUrl(url);
     console.log({ responseFeedByUrl });
-    if (responseGetUser && responseFeedByUrl) {
+    
+    if (user && responseFeedByUrl) {
       const followResponse = await createFeedFollow(
-        responseGetUser.id,
+        user.id,
         responseFeedByUrl.id
       );
 
@@ -222,13 +222,9 @@ export async function follow(cmdName: string, url: string) {
   }
 }
 
-export async function getFeedFollowsForUser(cmdName: string) {
+export async function getFeedFollowsForUser(cmdName: string, user: User) {
   try {
-    const responseCurrentUser = await getUser(readConfig().currentUserName);
-
-    const responseFeedFollowsByUser = await getFeedFollowsByUser(
-      responseCurrentUser.id
-    );
+    const responseFeedFollowsByUser = await getFeedFollowsByUser(user.id);
 
     console.log(
       responseFeedFollowsByUser?.map((item) => `- ${item.feed}`).join("\n")

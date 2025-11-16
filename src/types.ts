@@ -1,3 +1,5 @@
+import { User } from "./lib/db/schema";
+
 export type Config = {
   dbUrl: string;
   currentUserName: string;
@@ -42,3 +44,13 @@ export type MetaDatas = {
   };
   items: RSSItem[];
 };
+
+export type UserCommandHandler = (
+  cmdName: string,
+  user: User,
+  ...args: string[]
+) => Promise<void>;
+
+export type middlewareLoggedIn = (
+  handler: UserCommandHandler
+) => CommandHandler | CommandHandlerFetchFeed;
