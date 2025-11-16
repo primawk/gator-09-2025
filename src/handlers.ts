@@ -12,6 +12,7 @@ import { printFeed } from "./helper";
 import { createFeed, getFeedByUrl, readFeeds } from "./lib/db/queries/feeds";
 import {
   createFeedFollow,
+  deleteFeedFollow,
   getFeedFollowsByUser,
 } from "./lib/db/queries/feedFollows";
 import { User } from "./lib/db/schema";
@@ -206,7 +207,7 @@ export async function follow(cmdName: string, user: User, url: string) {
   try {
     const responseFeedByUrl = await getFeedByUrl(url);
     console.log({ responseFeedByUrl });
-    
+
     if (user && responseFeedByUrl) {
       const followResponse = await createFeedFollow(
         user.id,
@@ -230,6 +231,22 @@ export async function getFeedFollowsForUser(cmdName: string, user: User) {
       responseFeedFollowsByUser?.map((item) => `- ${item.feed}`).join("\n")
     );
 
+    process.exit(0);
+  } catch (error) {
+    console.error(`🔴 Error from ${cmdName}:`, error);
+    process.exit(1);
+  }
+}
+
+export async function unfollowHandler(
+  cmdName: string,
+  user: User,
+  url: string
+) {
+  if (!url) throw Error("url is missing!");
+  try {
+    await deleteFeedFollow(user.id, url);
+    console.log("feed has been unfollowed!");
     process.exit(0);
   } catch (error) {
     console.error(`🔴 Error from ${cmdName}:`, error);

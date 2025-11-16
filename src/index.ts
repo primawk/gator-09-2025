@@ -8,6 +8,7 @@ import {
   handlerLogin,
   registerHandler,
   resetHandler,
+  unfollowHandler,
 } from "./handlers";
 import { middlewareLoggedIn } from "./middleware";
 import { registerCommand, runCommand } from "./registerCommand";
@@ -29,6 +30,7 @@ async function main() {
     "following",
     middlewareLoggedIn(getFeedFollowsForUser)
   );
+  registerCommand(initObj, "unfollow", middlewareLoggedIn(unfollowHandler));
 
   const cmds = argv.slice(2);
   const args = argv.slice(3);
