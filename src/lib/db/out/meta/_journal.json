@@ -22,6 +22,13 @@
       "when": 1762681907164,
       "tag": "0002_stale_metal_master",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1763868430620,
+      "tag": "0003_flawless_reaper",
+      "breakpoints": true
     }
   ]
 }
