@@ -9,7 +9,12 @@ import {
 } from "./lib/db/queries/users";
 import { MetaDatas, RSSFeed, RSSItem } from "./types";
 import { printFeed } from "./helper";
-import { createFeed, getFeedByUrl, readFeeds } from "./lib/db/queries/feeds";
+import {
+  createFeed,
+  getFeedByUrl,
+  putFeedFetched,
+  readFeeds,
+} from "./lib/db/queries/feeds";
 import {
   createFeedFollow,
   deleteFeedFollow,
@@ -250,6 +255,17 @@ export async function unfollowHandler(
     process.exit(0);
   } catch (error) {
     console.error(`🔴 Error from ${cmdName}:`, error);
+    process.exit(1);
+  }
+}
+
+export async function markFeedFetched(id: string) {
+  if (!id) throw Error("feed id is missing!");
+  try {
+    await putFeedFetched(id);
+    process.exit(0);
+  } catch (error) {
+    console.error(`🔴 Error from marked feed for id ${id}:`, error);
     process.exit(1);
   }
 }
