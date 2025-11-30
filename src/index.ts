@@ -8,6 +8,7 @@ import {
   handlerLogin,
   registerHandler,
   resetHandler,
+  scrapeFeeds,
   unfollowHandler,
 } from "./handlers";
 import { middlewareLoggedIn } from "./middleware";

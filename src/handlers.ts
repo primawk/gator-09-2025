@@ -155,6 +155,7 @@ export async function fetchFeedHandler(feedURL: string): Promise<MetaDatas> {
 export async function addFeed(cmdName: string, user: User, ...args: string[]) {
   const name = args[0];
   const url = args[1];
+
   if (!name || !url) throw Error("arguments is missing!");
 
   try {
@@ -268,4 +269,18 @@ export async function markFeedFetched(id: string) {
     console.error(`🔴 Error from marked feed for id ${id}:`, error);
     process.exit(1);
   }
+}
+
+export async function getNextFeedToFetch() {
+  try {
+    const response = await readFeeds();
+    console.log({ response });
+  } catch (error) {}
+}
+
+export async function scrapeFeeds() {
+  try {
+    const response = await getNextFeedToFetch();
+    console.log({ response });
+  } catch (error) {}
 }
