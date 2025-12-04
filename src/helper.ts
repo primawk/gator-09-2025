@@ -27,11 +27,13 @@ export function printFeed(feed: Feed, user: User) {
   console.log(user);
 }
 
-export function parseDuration(durationStr: string): number | null {
+export function parseDuration(durationStr: string): number {
   const regex = /^(\d+)(ms|s|m|h)$/;
   const match = durationStr.match(regex);
 
-  if (!match) return null;
+  if (!match) {
+    throw new Error("Invalid duration format");
+  }
 
   const value = Number(match[1]);
   const unit = match[2];
@@ -45,7 +47,11 @@ export function parseDuration(durationStr: string): number | null {
       return value * 60 * 1000;
     case "h":
       return value * 60 * 60 * 1000;
-    default:
-      return null;
   }
+
+  throw new Error("Unknown unit");
+}
+
+export function handleError(err: unknown) {
+  console.error("Error:", err);
 }

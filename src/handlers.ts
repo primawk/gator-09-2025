@@ -8,7 +8,7 @@ import {
   getUsers,
 } from "./lib/db/queries/users";
 import { MetaDatas, RSSFeed, RSSItem } from "./types";
-import { printFeed } from "./helper";
+import { handleError, parseDuration, printFeed } from "./helper";
 import {
   createFeed,
   getFeedByUrl,
@@ -107,10 +107,16 @@ export async function getAllUsersHandler() {
 }
 
 export async function fetchFeedHandler(
-  timeBetweenReqs: string
+  timeBetweenRequests: string
 ): Promise<MetaDatas> {
-  if (!timeBetweenReqs) throw Error("time between requests is missing!");
-  console.log(`Collecting feeds every ${timeBetweenReqs}`);
+  if (!timeBetweenRequests) throw Error("time between requests is missing!");
+  console.log(`Collecting feeds every ${timeBetweenRequests}`);
+
+  scrapeFeeds().catch(handleError);
+
+  const interval = setInterval(() => {
+    scrapeFeeds().catch(handleError);
+  }, parseDuration(timeBetweenRequests));
 
   try {
     const response = await fetch(feedURL, {
@@ -279,13 +285,13 @@ export async function markFeedFetched(id: string) {
 export async function getNextFeedToFetch() {
   try {
     const response = await readFeeds();
-    console.log({ response });
   } catch (error) {}
 }
 
 export async function scrapeFeeds() {
   try {
     const response = await getNextFeedToFetch();
-    console.log({ response });
-  } catch (error) {}
+  } catch (error) {
+    throw error;
+  }
 }
