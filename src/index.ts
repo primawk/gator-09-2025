@@ -11,12 +11,14 @@ import {
   scrapeFeeds,
   unfollowHandler,
 } from "./handlers";
+import { parseDuration } from "./helper";
 import { middlewareLoggedIn } from "./middleware";
 import { registerCommand, runCommand } from "./registerCommand";
 import { CommandsRegistry } from "./types";
 import { argv } from "node:process";
 
 async function main() {
+  parseDuration("1h");
   let initObj: CommandsRegistry = {};
   registerCommand(initObj, "login", handlerLogin);
   registerCommand(initObj, "register", registerHandler);

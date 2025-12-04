@@ -106,7 +106,12 @@ export async function getAllUsersHandler() {
   }
 }
 
-export async function fetchFeedHandler(feedURL: string): Promise<MetaDatas> {
+export async function fetchFeedHandler(
+  timeBetweenReqs: string
+): Promise<MetaDatas> {
+  if (!timeBetweenReqs) throw Error("time between requests is missing!");
+  console.log(`Collecting feeds every ${timeBetweenReqs}`);
+
   try {
     const response = await fetch(feedURL, {
       headers: {
