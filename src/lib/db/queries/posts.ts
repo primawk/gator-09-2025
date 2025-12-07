@@ -1,6 +1,6 @@
 import { db } from "..";
 import { posts } from "../schema";
-import { desc, eq } from "drizzle-orm";
+import { desc } from "drizzle-orm";
 
 export async function createPost(
   title: string,

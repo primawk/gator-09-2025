@@ -22,7 +22,6 @@ import {
   getFeedFollowsByUser,
 } from "./lib/db/queries/feedFollows";
 import { Feed, User } from "./lib/db/schema";
-import { error } from "console";
 import { createPost, getPostsForUser } from "./lib/db/queries/posts";
 
 export async function handlerLogin(cmdName: string, ...args: string[]) {
