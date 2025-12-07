@@ -19,7 +19,6 @@ import { CommandsRegistry } from "./types";
 import { argv } from "node:process";
 
 async function main() {
-  parseDuration("1h");
   let initObj: CommandsRegistry = {};
   registerCommand(initObj, "login", handlerLogin);
   registerCommand(initObj, "register", registerHandler);
