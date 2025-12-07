@@ -27,17 +27,15 @@ export function printFeed(feed: Feed, user: User) {
   console.log(user);
 }
 
-export function parseDuration(durationStr: string): number {
+export function parseDuration(durationStr: string) {
   const regex = /^(\d+)(ms|s|m|h)$/;
   const match = durationStr.match(regex);
+  if (!match) return;
 
-  if (!match) {
-    throw new Error("Invalid duration format");
-  }
+  if (match.length !== 3) return;
 
-  const value = Number(match[1]);
+  const value = parseInt(match[1], 10);
   const unit = match[2];
-
   switch (unit) {
     case "ms":
       return value;
@@ -47,11 +45,13 @@ export function parseDuration(durationStr: string): number {
       return value * 60 * 1000;
     case "h":
       return value * 60 * 60 * 1000;
+    default:
+      return;
   }
-
-  throw new Error("Unknown unit");
 }
 
 export function handleError(err: unknown) {
-  console.error("Error:", err);
+  console.error(
+    `Error scraping feeds: ${err instanceof Error ? err.message : err}`
+  );
 }

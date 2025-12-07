@@ -5,10 +5,10 @@ import {
   follow,
   getAllUsersHandler,
   getFeedFollowsForUser,
+  handlerAgg,
   handlerLogin,
   registerHandler,
   resetHandler,
-  scrapeFeeds,
   unfollowHandler,
 } from "./handlers";
 import { parseDuration } from "./helper";
@@ -24,7 +24,7 @@ async function main() {
   registerCommand(initObj, "register", registerHandler);
   registerCommand(initObj, "reset", resetHandler);
   registerCommand(initObj, "users", getAllUsersHandler);
-  registerCommand(initObj, "agg", fetchFeedHandler);
+  registerCommand(initObj, "agg", handlerAgg);
   registerCommand(initObj, "addfeed", middlewareLoggedIn(addFeed));
   registerCommand(initObj, "feeds", feeds);
   registerCommand(initObj, "follow", middlewareLoggedIn(follow));

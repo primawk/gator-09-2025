@@ -12,7 +12,8 @@ import { handleError, parseDuration, printFeed } from "./helper";
 import {
   createFeed,
   getFeedByUrl,
-  putFeedFetched,
+  getNextFeedToFetch,
+  markFeedFetched,
   readFeeds,
 } from "./lib/db/queries/feeds";
 import {
@@ -20,7 +21,8 @@ import {
   deleteFeedFollow,
   getFeedFollowsByUser,
 } from "./lib/db/queries/feedFollows";
-import { User } from "./lib/db/schema";
+import { Feed, User } from "./lib/db/schema";
+import { error } from "console";
 
 export async function handlerLogin(cmdName: string, ...args: string[]) {
   if (args.length === 0) {
@@ -106,18 +108,8 @@ export async function getAllUsersHandler() {
   }
 }
 
-export async function fetchFeedHandler(
-  timeBetweenRequests: string
-): Promise<MetaDatas> {
-  if (!timeBetweenRequests) throw Error("time between requests is missing!");
-  console.log(`Collecting feeds every ${timeBetweenRequests}`);
-
-  scrapeFeeds().catch(handleError);
-
-  const interval = setInterval(() => {
-    scrapeFeeds().catch(handleError);
-  }, parseDuration(timeBetweenRequests));
-
+export async function fetchFeedHandler(feedURL: string): Promise<MetaDatas> {
+  if (!feedURL) throw Error("url is missing!");
   try {
     const response = await fetch(feedURL, {
       headers: {
@@ -271,27 +263,54 @@ export async function unfollowHandler(
   }
 }
 
-export async function markFeedFetched(id: string) {
-  if (!id) throw Error("feed id is missing!");
-  try {
-    await putFeedFetched(id);
-    process.exit(0);
-  } catch (error) {
-    console.error(`🔴 Error from marked feed for id ${id}:`, error);
-    process.exit(1);
+async function scrapeFeeds() {
+  const feed = await getNextFeedToFetch();
+  if (!feed) {
+    console.log("No feeds to fetch");
+    return;
   }
+  console.log("Found a feed to fetch!");
+  scrapeFeed(feed);
 }
 
-export async function getNextFeedToFetch() {
-  try {
-    const response = await readFeeds();
-  } catch (error) {}
+async function scrapeFeed(feed: Feed) {
+  await markFeedFetched(feed.id);
+
+  const feedData = await fetchFeedHandler(feed.url);
+
+  console.log(
+    `Feed ${feed.name} collected, ${feedData.items.length} posts found`
+  );
 }
 
-export async function scrapeFeeds() {
-  try {
-    const response = await getNextFeedToFetch();
-  } catch (error) {
-    throw error;
+export async function handlerAgg(cmdName: string, ...args: string[]) {
+  if (args.length !== 1) {
+    throw new Error(`usage: ${cmdName} <time_between_reqs>`);
   }
+
+  const timeArg = args[0];
+  const timeBetweenRequests = parseDuration(timeArg);
+
+  if (!timeBetweenRequests) {
+    throw new Error(
+      `invalid duration: ${timeArg} — use format 1h 30m 15s or 3500ms`
+    );
+  }
+
+  console.log(`Collecting feeds every ${timeArg}...`);
+
+  // run the first scrape immediately
+  scrapeFeeds().catch(handleError);
+
+  const interval = setInterval(() => {
+    scrapeFeeds().catch(handleError);
+  }, timeBetweenRequests);
+
+  await new Promise<void>((resolve) => {
+    process.on("SIGINT", () => {
+      console.log("Shutting down feed aggregator...");
+      clearInterval(interval);
+      resolve();
+    });
+  });
 }
