@@ -23,6 +23,7 @@ import {
 } from "./lib/db/queries/feedFollows";
 import { Feed, User } from "./lib/db/schema";
 import { error } from "console";
+import { createPost, getPostsForUser } from "./lib/db/queries/posts";
 
 export async function handlerLogin(cmdName: string, ...args: string[]) {
   if (args.length === 0) {
@@ -278,6 +279,25 @@ async function scrapeFeed(feed: Feed) {
 
   const feedData = await fetchFeedHandler(feed.url);
 
+  if (feedData?.items.length > 0) {
+    for (let index = 0; index < feedData?.items.length; index++) {
+      try {
+        const post = await createPost(
+          feedData?.items[index].title,
+          feedData?.items[index].link,
+          feed.id,
+          new Date(feedData?.items[index].pubDate)
+        );
+        console.log(`post ${post.title} has been stored!`);
+      } catch (error) {
+        console.error(
+          `🔴 Error posting post ${feedData?.items[index].title}`,
+          error
+        );
+      }
+    }
+  }
+
   console.log(
     `Feed ${feed.name} collected, ${feedData.items.length} posts found`
   );
@@ -313,4 +333,15 @@ export async function handlerAgg(cmdName: string, ...args: string[]) {
       resolve();
     });
   });
+}
+
+export async function browse(cmdName: string, ...args: string[]) {
+  try {
+    const response = await getPostsForUser(parseInt(args[0]));
+    console.log(response);
+    process.exit(0);
+  } catch (error) {
+    console.error(`🔴 Error ${cmdName} handler:`, error);
+    process.exit(1);
+  }
 }

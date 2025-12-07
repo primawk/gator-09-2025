@@ -1,5 +1,6 @@
 import {
   addFeed,
+  browse,
   feeds,
   fetchFeedHandler,
   follow,
@@ -34,6 +35,7 @@ async function main() {
     middlewareLoggedIn(getFeedFollowsForUser)
   );
   registerCommand(initObj, "unfollow", middlewareLoggedIn(unfollowHandler));
+  registerCommand(initObj, "browse", browse);
 
   const cmds = argv.slice(2);
   const args = argv.slice(3);
